@@ -1,7 +1,11 @@
 import QtQuick
 import QtQuick.Controls.Basic
 
+
 ApplicationWindow {
+    property string currTime: "00:00:00"
+    property QtObject timer
+
     visible: true
     width: screen.desktopAvailableWidth
     height: 20
@@ -19,8 +23,16 @@ ApplicationWindow {
     Text {
         /* y: 5 */
         anchors.centerIn: parent
-        text: "🍅 Pomodoro Timer"
+        /* text: "🍅 Pomodoro Timer" */
+        text: currTime
         font.pixelSize: 10
         color: '#ffffff'
+    }
+
+    Connections {
+        target: timer
+        function onUpdated(msg) {
+            currTime = msg
+        }
     }
 }
