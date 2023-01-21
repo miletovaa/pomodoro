@@ -11,7 +11,10 @@ from PyQt6.QtQml import QQmlApplicationEngine
 from PyQt6.QtQuick import QQuickWindow
 from PyQt6.QtCore import QObject, pyqtSignal
 
-work_time = 1 # * HERE WE SET THE WORK TIME (IN MINUTES)
+with open('config.txt') as file:
+    config = file.readlines()
+    work_time = config[0]
+    rest_time = config[1]
 
 def mintomilisec(min):
     return min * 60 * 10
@@ -39,15 +42,14 @@ class Timer(QObject):
                 break
             sleep(0.1)
 
-def runWorkTime():
-    QQuickWindow.setSceneGraphBackend('software')
-    app = QGuiApplication(sys.argv)
-    engine = QQmlApplicationEngine()
-    engine.quit.connect(app.quit)
-    engine.load('./application.qml')
-    timer = Timer()
-    engine.rootObjects()[0].setProperty('timer', timer)
-    timer.bootUp()
-    sys.exit(app.exec())
-
-runWorkTime()
+class Main():
+    def runWorkTime():
+        QQuickWindow.setSceneGraphBackend('software')
+        app = QGuiApplication(sys.argv)
+        engine = QQmlApplicationEngine()
+        engine.quit.connect(app.quit)
+        engine.load('./pomodoro.qml')
+        timer = Timer()
+        engine.rootObjects()[0].setProperty('timer', timer)
+        timer.bootUp()
+        sys.exit(app.exec())

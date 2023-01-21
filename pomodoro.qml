@@ -22,9 +22,7 @@ ApplicationWindow {
         color: '#539353'
     }
     Text {
-        /* y: 5 */
         anchors.centerIn: parent
-        /* text: "🍅 Pomodoro Timer" */
         text: progressBarInt + '%'
         font.pixelSize: 10
         color: '#ffffff'
