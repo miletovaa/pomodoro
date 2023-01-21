@@ -11,35 +11,43 @@ from PyQt6.QtQml import QQmlApplicationEngine
 from PyQt6.QtQuick import QQuickWindow
 from PyQt6.QtCore import QObject, pyqtSignal
 
+work_time = 1 # * HERE WE SET THE WORK TIME (IN MINUTES)
+
+def mintomilisec(min):
+    return min * 60 * 10
+
+w = mintomilisec(work_time)
+
 class Timer(QObject):
     def __init__(self):
         QObject.__init__(self)
-    updated = pyqtSignal(str, arguments=['updater'])
-    def updater(self, curr_time):
-        self.updated.emit(curr_time)
+    updated = pyqtSignal(float, arguments=['updater'])
+    def updater(self, progress_bar):
+        self.updated.emit(progress_bar)
     def bootUp(self):
         t_thread = threading.Thread(target=self._bootUp)
         t_thread.daemon = True
         t_thread.start()
     def _bootUp(self):
+        passed_time = 0
         while True:
-            curr_time = strftime("%H:%M:%S", gmtime())
-            self.updater(curr_time)
+            passed_time += 1
+            progress_bar = passed_time / w * 100
+            self.updater(progress_bar)
+            if (progress_bar == 100):
+                toast('⌛ Work is over', duration='long', button='Rest')
+                break
             sleep(0.1)
 
-minutes = 5
-w = minutes * 60 * 10
+def runWorkTime():
+    QQuickWindow.setSceneGraphBackend('software')
+    app = QGuiApplication(sys.argv)
+    engine = QQmlApplicationEngine()
+    engine.quit.connect(app.quit)
+    engine.load('./application.qml')
+    timer = Timer()
+    engine.rootObjects()[0].setProperty('timer', timer)
+    timer.bootUp()
+    sys.exit(app.exec())
 
-QQuickWindow.setSceneGraphBackend('software')
-app = QGuiApplication(sys.argv)
-engine = QQmlApplicationEngine()
-engine.quit.connect(app.quit)
-engine.load('./application.qml')
-timer = Timer()
-engine.rootObjects()[0].setProperty('timer', timer)
-timer.bootUp()
-sys.exit(app.exec())
-
-
-
-# toast('Hello Python🐍')``
+runWorkTime()

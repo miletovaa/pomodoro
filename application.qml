@@ -3,7 +3,8 @@ import QtQuick.Controls.Basic
 
 
 ApplicationWindow {
-    property string currTime: "00:00:00"
+    property double progressBar
+    property int progressBarInt
     property QtObject timer
 
     visible: true
@@ -13,10 +14,10 @@ ApplicationWindow {
 
     x: 0
     y: 0
-    flags: Qt.FramelessWindowHint | Qt.Window
+    flags: Qt.FramelessWindowHint | Qt.Window | Qt.WindowStaysOnTopHint
     color: 'transparent'
     Rectangle {
-        width: screen.desktopAvailableWidth/100
+        width: screen.desktopAvailableWidth/100 * progressBar
         height: 5
         color: '#539353'
     }
@@ -24,7 +25,7 @@ ApplicationWindow {
         /* y: 5 */
         anchors.centerIn: parent
         /* text: "🍅 Pomodoro Timer" */
-        text: currTime
+        text: progressBarInt + '%'
         font.pixelSize: 10
         color: '#ffffff'
     }
@@ -32,7 +33,8 @@ ApplicationWindow {
     Connections {
         target: timer
         function onUpdated(msg) {
-            currTime = msg
+            progressBar = msg
+            progressBarInt = Math.floor(progressBar)
         }
     }
 }
