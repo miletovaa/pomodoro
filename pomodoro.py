@@ -24,9 +24,9 @@ w = mintomilisec(work_time)
 class Timer(QObject):
     def __init__(self):
         QObject.__init__(self)
-    updated = pyqtSignal(float, arguments=['updater'])
-    def updater(self, progress_bar):
-        self.updated.emit(progress_bar)
+    updated = pyqtSignal(int, arguments=['updater'])
+    def updater(self, passed_time):
+        self.updated.emit(passed_time)
     def bootUp(self):
         t_thread = threading.Thread(target=self._bootUp)
         t_thread.daemon = True
@@ -35,8 +35,8 @@ class Timer(QObject):
         passed_time = 0
         while True:
             passed_time += 1
+            self.updater(passed_time)
             progress_bar = passed_time / w * 100
-            self.updater(progress_bar)
             if (progress_bar == 100):
                 toast('⌛ Work is over', duration='long', button='Rest')
                 break
@@ -50,6 +50,7 @@ def runWorkTime():
     engine.quit.connect(app.quit)
     engine.load('./pomodoro.qml')
     timer = Timer()
+    engine.rootObjects()[0].setProperty('workTime', w)
     engine.rootObjects()[0].setProperty('timer', timer)
     timer.bootUp()
     sys.exit(app.exec())
