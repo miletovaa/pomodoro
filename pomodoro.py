@@ -15,6 +15,8 @@ with open('config.txt') as file:
     config = file.readlines()
     work_time = float(config[0])
     rest_time = float(config[1])
+    settings_show_time = config[2]
+    settings_show_percents = config[3]
 
 def mintomilisec(min):
     return min * 60 * 10
@@ -51,6 +53,8 @@ def runWorkTime():
     engine.load('./pomodoro.qml')
     timer = Timer()
     engine.rootObjects()[0].setProperty('workTime', w)
+    engine.rootObjects()[0].setProperty('settingsShowTime', settings_show_time)
+    engine.rootObjects()[0].setProperty('settingsShowPercents', settings_show_percents)
     engine.rootObjects()[0].setProperty('timer', timer)
     timer.bootUp()
     sys.exit(app.exec())

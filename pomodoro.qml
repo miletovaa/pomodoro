@@ -3,6 +3,8 @@ import QtQuick.Controls.Basic
 
 
 ApplicationWindow {
+    id: window
+
     property double progressBar
     property int progressBarInt
     property int workTime
@@ -10,6 +12,8 @@ ApplicationWindow {
     property int leftTime
     property int leftMin
     property int leftSec
+    property int settingsShowTime
+    property int settingsShowPercents
     property QtObject timer
 
     visible: true
@@ -28,7 +32,12 @@ ApplicationWindow {
     }
     Text {
         anchors.centerIn: parent
-        text: leftMin + ':' + leftSec + ' left (' + progressBarInt + '%)'
+        function showProgressBarText () {
+            if (window.settingsShowTime == '1' && window.settingsShowPercents == '1') return leftMin + ':' + leftSec + ' left (' + progressBarInt + '%)';
+            else if (window.settingsShowTime == '1') return leftMin + ':' + leftSec + ' left';
+            else if (window.settingsShowPercents == '1') return progressBarInt + '%'
+        }
+        text: showProgressBarText()
         font.pixelSize: 10
         color: '#ffffff'
     }
@@ -41,6 +50,7 @@ ApplicationWindow {
             leftTime = (workTime - passedTime) / 10
             leftMin = leftTime / 60
             leftSec = leftTime - (leftMin * 60)
+            leftSec = (leftSec < 10) ? '0' + leftSec.toString() : leftSec
             progressBarInt = Math.floor(progressBar)
         }
     }

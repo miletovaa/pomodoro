@@ -6,7 +6,9 @@ ApplicationWindow {
 
     property int workTime
     property int restTime
-    property QtObject setTime
+    property int settingsShowTime
+    property int settingsShowPercents
+    property QtObject changeSettings
     property QtObject startTimer
 
     visible: true
@@ -60,7 +62,7 @@ ApplicationWindow {
             y: 2
             width: 70
             height: 36
-            onClicked: setTime.workTime(work_time_field.text)
+            onClicked: changeSettings.workTime(work_time_field.text)
 
             contentItem: Text {
                 text: "SET"
@@ -109,7 +111,7 @@ ApplicationWindow {
             y: 2
             width: 70
             height: 36
-            onClicked: setTime.restTime(rest_time_field.text)
+            onClicked: changeSettings.restTime(rest_time_field.text)
 
             contentItem: Text {
                 text: "SET"
@@ -123,6 +125,36 @@ ApplicationWindow {
                 color: parent.down ? "#404040" : "#505050"
                 radius: 5 
             }
+        }
+    }
+
+    Rectangle {
+        y: 180
+        x: 370
+        CheckBox {
+            id: checkbox_time
+            checked: settingsShowTime
+            onClicked: changeSettings.checkboxTime(checkbox_time.checked)
+        }
+        Text {
+            x: 50
+            y: 4
+            text: 'show time left'
+            font.pixelSize: 18
+            color: '#B3B3B3'
+        }
+        CheckBox {
+            id: checkbox_percents
+            y: 40
+            checked: settingsShowPercents
+            onClicked: changeSettings.checkboxPercents(checkbox_percents.checked)
+        }
+        Text {
+            x: 50
+            y: 44
+            text: 'show percents left'
+            font.pixelSize: 18
+            color: '#B3B3B3'
         }
     }
 
