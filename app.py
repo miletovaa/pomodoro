@@ -1,5 +1,6 @@
 import sys
 import os
+import subprocess
 from PyQt6.QtGui import QGuiApplication
 from PyQt6.QtQml import QQmlApplicationEngine
 from PyQt6.QtQuick import QQuickWindow
@@ -18,15 +19,18 @@ def changeConfig(min, line):
 class setTime(QObject):
     @Slot(str)
     def workTime(self, min):
-        changeConfig(min, 0)
+        if int(min) > 0:
+            changeConfig(min, 0)
     @Slot(str)
     def restTime(self, min):
-        changeConfig(min, 1)
+        if int(min) > 0:
+            changeConfig(min, 1)
 
 class startTimer(QObject):
     @Slot()
     def startWork(self):
-        QProcess().start("python3", ['/pomodoro.py'])
+        print('Start')
+        subprocess.Popen(["python", './pomodoro.py'])
 
 
 set_time = setTime()
