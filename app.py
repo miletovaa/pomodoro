@@ -1,10 +1,12 @@
-import sys
-import os
-import subprocess
+import sys, os, time, subprocess, multiprocessing
+
+
+from win11toast import toast
+
 from PyQt6.QtGui import QGuiApplication
 from PyQt6.QtQml import QQmlApplicationEngine
 from PyQt6.QtQuick import QQuickWindow
-from PyQt6.QtCore import QObject, pyqtSlot as Slot, pyqtSignal as Signal,  QProcess
+from PyQt6.QtCore import QObject, pyqtSlot as Slot
 
 with open('config.txt') as file:
     config = file.readlines()
@@ -27,12 +29,16 @@ def trueFalse(val):
 class changeSettings(QObject):
     @Slot(str)
     def workTime(self, min):
-        if int(min) > 0:
+        if (int(min) > 0):
             changeConfig(min, 0)
+        else:
+            return True
     @Slot(str)
     def restTime(self, min):
-        if int(min) > 0:
+        if (int(min) > 0):
             changeConfig(min, 1)
+        else:
+            return True
     @Slot(str)
     def checkboxTime(self, val):
         changeConfig(trueFalse(val), 2)
@@ -43,8 +49,18 @@ class changeSettings(QObject):
 class startTimer(QObject):
     @Slot()
     def startWork(self):
-        print('Start')
-        subprocess.Popen(["python", './pomodoro.py'])
+        print('Start work')
+        p = subprocess.Popen(["python", './pomodoro.py'])
+        time.sleep(int(work_time)*60)
+        p.kill()
+        toast('⌛ Work is over. Relax ;)', duration='long', button='Rest', on_click=startTimer.startRest())
+
+    def startRest(self):
+        print('Start rest')
+        p = subprocess.Popen(["python", './pomodoro.py'])
+        time.sleep(int(rest_time)*60)
+        p.kill()
+        toast('⌛ Rest is over. Time to work!', duration='long', button='Rest', on_click=startTimer.startWork())
 
 
 change_settings = changeSettings()

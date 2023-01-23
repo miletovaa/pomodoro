@@ -14,6 +14,7 @@ ApplicationWindow {
     property int leftSec
     property int settingsShowTime
     property int settingsShowPercents
+    property string progressBarColor
     property QtObject timer
 
     visible: true
@@ -28,7 +29,7 @@ ApplicationWindow {
     Rectangle {
         width: screen.desktopAvailableWidth/100 * progressBar
         height: 5
-        color: '#539353'
+        color: progressBarColor
     }
     Text {
         anchors.centerIn: parent

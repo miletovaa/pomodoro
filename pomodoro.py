@@ -1,15 +1,22 @@
-from win11toast import toast
+import threading, sys, os, time, signal
 
-import threading
+from multiprocessing import Process
 
-from time import strftime, gmtime, sleep
-
-import sys
-import os
 from PyQt6.QtGui import QGuiApplication
 from PyQt6.QtQml import QQmlApplicationEngine
 from PyQt6.QtQuick import QQuickWindow
 from PyQt6.QtCore import QObject, pyqtSignal
+
+for line in sys.stdin:
+    if 'q' == line.rstrip():
+        break
+    cond = line
+
+if (cond == 'work'):
+    progress_bar_color = '#539353'
+else:
+    progress_bar_color = 'red'
+
 
 with open('config.txt') as file:
     config = file.readlines()
@@ -17,11 +24,6 @@ with open('config.txt') as file:
     rest_time = float(config[1])
     settings_show_time = config[2]
     settings_show_percents = config[3]
-
-def mintomilisec(min):
-    return min * 60 * 10
-
-w = mintomilisec(work_time)
 
 class Timer(QObject):
     def __init__(self):
@@ -40,10 +42,8 @@ class Timer(QObject):
             self.updater(passed_time)
             progress_bar = passed_time / w * 100
             if (progress_bar == 100):
-                toast('⌛ Work is over', duration='long', button='Rest')
                 break
-            sleep(0.1)
-
+            time.sleep(0.1)
 
 def runWorkTime():
     QQuickWindow.setSceneGraphBackend('software')
@@ -55,8 +55,12 @@ def runWorkTime():
     engine.rootObjects()[0].setProperty('workTime', w)
     engine.rootObjects()[0].setProperty('settingsShowTime', settings_show_time)
     engine.rootObjects()[0].setProperty('settingsShowPercents', settings_show_percents)
+    engine.rootObjects()[0].setProperty('progressBarColor', progress_bar_color)
     engine.rootObjects()[0].setProperty('timer', timer)
     timer.bootUp()
     sys.exit(app.exec())
 
-runWorkTime()
+
+if __name__ == '__main__':
+    w = work_time * 60 * 10
+    runWorkTime()
