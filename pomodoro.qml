@@ -7,7 +7,7 @@ ApplicationWindow {
 
     property double progressBar
     property int progressBarInt
-    property int workTime
+    property int time
     property int passedTime
     property int leftTime
     property int leftMin
@@ -47,8 +47,8 @@ ApplicationWindow {
         target: timer
         function onUpdated(msg) {
             passedTime = msg
-            progressBar = passedTime / workTime * 100
-            leftTime = (workTime - passedTime) / 10
+            progressBar = passedTime / time * 100
+            leftTime = (time - passedTime) / 10
             leftMin = leftTime / 60
             leftSec = leftTime - (leftMin * 60)
             leftSec = (leftSec < 10) ? '0' + leftSec.toString() : leftSec

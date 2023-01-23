@@ -10,13 +10,13 @@ from PyQt6.QtCore import QObject, pyqtSlot as Slot
 
 with open('config.txt') as file:
     config = file.readlines()
-    work_time = config[0]
-    rest_time = config[1]
-    settings_show_time = config[2]
-    settings_show_percents = config[3]
+    work_time = config[1]
+    rest_time = config[2]
+    settings_show_time = config[3]
+    settings_show_percents = config[4]
 
-def changeConfig(min, line):
-    config[line] = min + '\n'
+def changeConfig(arg, line):
+    config[line] = arg + '\n'
     with open('config.txt', 'w') as file:
         file.writelines(config)
 
@@ -50,17 +50,20 @@ class startTimer(QObject):
     @Slot()
     def startWork(self):
         print('Start work')
+        changeConfig('w', 0)
         p = subprocess.Popen(["python", './pomodoro.py'])
         time.sleep(int(work_time)*60)
         p.kill()
-        toast('⌛ Work is over. Relax ;)', duration='long', button='Rest', on_click=startTimer.startRest())
+        changeConfig('r', 0)
+        toast('⌛ Work is over. Relax ;)', duration='long', on_click=lambda args: self.startRest())
 
     def startRest(self):
         print('Start rest')
         p = subprocess.Popen(["python", './pomodoro.py'])
         time.sleep(int(rest_time)*60)
         p.kill()
-        toast('⌛ Rest is over. Time to work!', duration='long', button='Rest', on_click=startTimer.startWork())
+        changeConfig('w', 0)
+        toast('⌛ Rest is over. Time to work!', duration='long', on_click=lambda args: self.startWork)
 
 
 change_settings = changeSettings()
@@ -79,3 +82,4 @@ obj.setProperty('settingsShowTime', settings_show_time)
 obj.setProperty('changeSettings', change_settings)
 obj.setProperty('startTimer', start_timer)
 sys.exit(app.exec())
+
