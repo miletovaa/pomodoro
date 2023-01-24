@@ -47,8 +47,8 @@ if __name__ == '__main__':
     with open('config.txt') as file:
         config = file.readlines()
         cond = config[0][0]
-        work_time = float(config[1])
-        rest_time = float(config[2])
+        work_time = int(config[1])
+        rest_time = int(config[2])
         settings_show_time = config[3]
         settings_show_percents = config[4]
 

@@ -26,44 +26,49 @@ def trueFalse(val):
     elif (val == 'false'):
         return '0'
 
+subp = [0,0]
+def killSubprocesses(n):
+    if (subp[n] != 0):
+        subp[n].kill()
+        subp[n] = 0
+
 class changeSettings(QObject):
     @Slot(str)
     def workTime(self, min):
-        if (int(min) > 0):
-            changeConfig(min, 0)
-        else:
-            return True
-    @Slot(str)
-    def restTime(self, min):
         if (int(min) > 0):
             changeConfig(min, 1)
         else:
             return True
     @Slot(str)
+    def restTime(self, min):
+        if (int(min) > 0):
+            changeConfig(min, 2)
+        else:
+            return True
+    @Slot(str)
     def checkboxTime(self, val):
-        changeConfig(trueFalse(val), 2)
+        changeConfig(trueFalse(val), 3)
     @Slot(str)
     def checkboxPercents(self, val):
-        changeConfig(trueFalse(val), 3)
+        changeConfig(trueFalse(val), 4)
 
 class startTimer(QObject):
     @Slot()
     def startWork(self):
         print('Start work')
+        killSubprocesses(1)
         changeConfig('w', 0)
-        p = subprocess.Popen(["python", './pomodoro.py'])
+        subp[0] = subprocess.Popen(["python", './pomodoro.py'])
         time.sleep(int(work_time)*60)
-        p.kill()
-        changeConfig('r', 0)
         toast('⌛ Work is over. Relax ;)', duration='long', on_click=lambda args: self.startRest())
 
     def startRest(self):
         print('Start rest')
-        p = subprocess.Popen(["python", './pomodoro.py'])
+        killSubprocesses(0)
+        changeConfig('r', 0)
+        subp[1] = subprocess.Popen(["python", './pomodoro.py'])
         time.sleep(int(rest_time)*60)
-        p.kill()
-        changeConfig('w', 0)
-        toast('⌛ Rest is over. Time to work!', duration='long', on_click=lambda args: self.startWork)
+        toast('⌛ Rest is over. Time to work!', duration='long', on_click=lambda args: self.startWork())
 
 
 change_settings = changeSettings()
